@@ -1,0 +1,109 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from collections import OrderedDict
+import numpy as np
+import logging
+from pycocoevalcap.bleu.bleu import Bleu
+from pycocoevalcap.meteor.meteor import Meteor
+from pycocoevalcap.rouge.rouge import Rouge
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                            datefmt='%m/%d/%Y %H:%M:%S', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+Bleu_scorer = None
+Meteor_scorer = None
+Rouge_scorer = None
+def init_scorer():
+    global Bleu_scorer
+    global Meteor_scorer
+    global Rouge_scorer
+    Bleu_scorer = Bleu_scorer or Bleu(4)
+    Meteor_scorer = Meteor_scorer or Meteor()
+    Rouge_scorer = Rouge_scorer or Rouge()
+
+def array_to_str(arr):
+    out = ''
+    for i in range(len(arr)):
+        out += str(arr[i]) + ' '
+        if arr[i] == 0:
+            break
+    return out.strip()
+
+def get_self_critical_reward(greedy_res, data_gts, gen_result): 
+    batch_size = len(data_gts)
+    gen_result_size = gen_result.shape[0]
+    seq_per_img = gen_result_size // len(data_gts)
+    assert greedy_res.shape[0] == batch_size
+
+    res = OrderedDict()
+    gen_result = gen_result.data.cpu().numpy()
+    greedy_res = greedy_res.data.cpu().numpy()
+    for i in range(gen_result_size):
+        res[i] = [array_to_str(gen_result[i])]
+    for i in range(batch_size):
+        res[gen_result_size + i] = [array_to_str(greedy_res[i])]
+
+    gts = OrderedDict()
+    data_gts = data_gts.cpu().numpy()
+    for i in range(len(data_gts)):
+        gts[i] = [array_to_str(data_gts[i])]
+    res_ = [{'image_id': i, 'caption': res[i]} for i in range(len(res))]
+    res__ = {i: res[i] for i in range(len(res_))}
+    gts_ = {i: gts[i // seq_per_img] for i in range(gen_result_size)}
+    gts_.update({i + gen_result_size: gts[i] for i in range(batch_size)})
+
+    
+
+    _, bleu_scores = Bleu_scorer.compute_score(gts_, res__, verbose = 0)
+    bleu_scores = np.array(bleu_scores[3])
+    _, meteor_scores = Meteor_scorer.compute_score(gts_, res__)
+    meteor_scores = np.array(meteor_scores)
+    _, rouge_scores = Rouge_scorer.compute_score(gts_, res__)
+    rouge_scores = np.array(rouge_scores)
+    scores = 5/11 * bleu_scores + 1/11 * meteor_scores + 5/11 * rouge_scores
+    
+    scores = scores[:gen_result_size].reshape(batch_size, seq_per_img) - scores[-batch_size:][:, np.newaxis]
+    scores = scores.reshape(gen_result_size)
+    rewards = np.repeat(scores[:, np.newaxis], gen_result.shape[1], 1)
+
+    return rewards
+
+
+def get_absolute_score(data_gts, gen_result): 
+    # 注意：删除了 greedy_res 参数
+    batch_size = len(data_gts)
+    gen_result_size = gen_result.shape[0]
+    seq_per_img = gen_result_size // batch_size # 这就是你的 train_sample_n
+
+    res = OrderedDict()
+    gen_result_np = gen_result.data.cpu().numpy()
+    for i in range(gen_result_size):
+        res[i] = [array_to_str(gen_result_np[i])]
+
+    gts = OrderedDict()
+    data_gts_np = data_gts.cpu().numpy()
+    for i in range(batch_size):
+        gts[i] = [array_to_str(data_gts_np[i])]
+    
+    # 关键修改：gts_ 只需要对应 gen_result_size 个样本
+    res_final = {i: res[i] for i in range(gen_result_size)}
+    gts_final = {i: gts[i // seq_per_img] for i in range(gen_result_size)}
+
+    # 计算各项指标原始分
+    _, bleu_scores = Bleu_scorer.compute_score(gts_final, res_final, verbose=0)
+    bleu_scores = np.array(bleu_scores[3]) # BLEU-4
+    
+    _, meteor_scores = Meteor_scorer.compute_score(gts_final, res_final)
+    meteor_scores = np.array(meteor_scores)
+    
+    _, rouge_scores = Rouge_scorer.compute_score(gts_final, res_final)
+    rouge_scores = np.array(rouge_scores)
+
+    # 这里的权重保持和你之前一致 (5:1:5)
+    scores = 5/11 * bleu_scores + 1/11 * meteor_scores + 5/11 * rouge_scores
+    
+    # --- 核心改动：不再减去 baseline 分数 ---
+    # 直接返回每个样本的绝对得分，形状为 [B * train_sample_n]
+    return scores
