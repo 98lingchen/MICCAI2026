@@ -18,13 +18,13 @@ For MIMIC-CXR, you can download the dataset from [here]([https://physionet.org/c
 
 ### Train
 
-Run `bash train.sh` to train a model on the MIMIC-CXR data.
+Run `bash run_train.sh` to train a model on the MIMIC-CXR data.
 
 
 
 ### Test
 
-Run `bash test.sh` to train a model on the MIMIC-CXR data.
+Run `bash run_test.sh` to train a model on the MIMIC-CXR data.
 
 
 
