@@ -24,7 +24,7 @@ Run `bash run_train.sh` to train a model on the MIMIC-CXR data.
 
 ### Test
 
-Run `bash run_test.sh` to train a model on the MIMIC-CXR data.
+Run `bash run_test.sh` to test a model on the MIMIC-CXR data.
 
 
 
