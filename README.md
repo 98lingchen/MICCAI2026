@@ -1,87 +1,33 @@
-# Project Title
+# Precision Recall Controllable Radiology Report Generation via Hybrid Natural Language and Clinical Reward Learning
 
-One Paragraph of project description goes here
+This repository contains the implementation for our method that enables continuous control of clinical precision and recall via a tunable parameter λ using group-relative reinforcement learning.
 
-## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Requirements
 
-### Prerequisites
+torch==1.7.1
+torchvision==0.8.2
+opencv-python==4.4.0.42
+f1chexbert
 
-What things you need to install the software and how to install them
 
-```
-Give examples
-```
 
-### Installing
+## Datasets
 
-A step by step series of examples that tell you how to get a development env running
+For MIMIC-CXR, you can download the dataset from [here]([https://physionet.org/content/mimic-cxr/](https://physionet.org/content/mimic-cxr-jpg/2.0.0/)) and then put the files in `data/mimic_cxr`.
 
-Say what the step will be
+### Train
 
-```
-Give the example
-```
+Run `bash train.sh` to train a model on the MIMIC-CXR data.
 
-And repeat
 
-```
-until finished
-```
 
-End with an example of getting some data out of the system or using it for a little demo
+### Test
 
-## Running the tests
+Run `bash test.sh` to train a model on the MIMIC-CXR data.
 
-Explain how to run the automated tests for this system
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Thanks for the open source code in  "Generating Radiology Reports via Memory-driven Transformer", and "LHR-RFL: Linear Hybrid-Reward-Based Reinforced Focal Learning for Automatic Radiology Report Generation".
