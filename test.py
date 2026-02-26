@@ -77,14 +77,13 @@ def prepare_device(n_gpu_use: int):
 def load_checkpoint(model, resume_path, device):
     ckpt = torch.load(resume_path, map_location=device)
 
-    # your trainer saves:
-    # state = {'epoch', 'state_dict', 've_optimizer', 'ed_optimizer', 'monitor_best'}
+
     if isinstance(ckpt, dict) and 'state_dict' in ckpt:
         state_dict = ckpt['state_dict']
     else:
         state_dict = ckpt
 
-    # handle DataParallel prefix mismatch (module.)
+
     model_keys = list(model.state_dict().keys())
     ckpt_keys = list(state_dict.keys())
     if len(ckpt_keys) > 0:
@@ -96,8 +95,7 @@ def load_checkpoint(model, resume_path, device):
             state_dict = {'module.' + k: v for k, v in state_dict.items()}
 
     missing, unexpected = model.load_state_dict(state_dict, strict=False)
-    print(f'[CKPT] Loaded: {resume_path}')
-    print(f'[CKPT] missing={len(missing)} unexpected={len(unexpected)}')
+
 
 
 @torch.no_grad()
@@ -151,9 +149,9 @@ def test_only(model, tokenizer, test_loader, device, save_dir, xlsx_name, curren
     })
     df.to_excel(excel_path, index=False)
 
-    print(f'[Saved Predictions] {excel_path}')
 
-    # compute metrics
+
+
     test_met = compute_scores(
         {i: [gt] for i, gt in enumerate(test_gts)},
         {i: [re] for i, re in enumerate(test_res)},
@@ -184,7 +182,7 @@ def main():
     all_results = []
 
     for lmbda in lambda_list:
-        print(f"\n>>> Running inference with parameter_lambda = {lmbda}")
+
         
         metrics = test_only(model, tokenizer, test_loader, device, args.save_dir, args.xlsx_name, lmbda)
         
@@ -192,14 +190,14 @@ def main():
         metrics['lambda'] = lmbda
         all_results.append(metrics)
 
-        print(f'Results for lambda {lmbda}: {metrics}')
+
 
 
     metrics_df = pd.DataFrame(all_results)
     metrics_save_path = os.path.join(args.save_dir, 'all_lambda_metrics_summary.csv')
     metrics_df.to_csv(metrics_save_path, index=False)
     
-    print(f'\n[Finished] All metrics saved to: {metrics_save_path}')
+
 
 
 if __name__ == '__main__':
