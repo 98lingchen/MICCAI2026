@@ -30,4 +30,4 @@ Run `bash run_test.sh` to test a model on the MIMIC-CXR data.
 
 ## Acknowledgments
 
-Thanks for the open source code in  "Generating Radiology Reports via Memory-driven Transformer", and "LHR-RFL: Linear Hybrid-Reward-Based Reinforced Focal Learning for Automatic Radiology Report Generation".
+Thanks for the open source code in  "Generating Radiology Reports via Memory-driven Transformer", "Reinforced Cross-modal Alignment for Radiology Report Generation", and "LHR-RFL: Linear Hybrid-Reward-Based Reinforced Focal Learning for Automatic Radiology Report Generation".
