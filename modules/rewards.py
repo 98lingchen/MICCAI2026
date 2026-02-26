@@ -72,10 +72,10 @@ def get_self_critical_reward(greedy_res, data_gts, gen_result):
 
 
 def get_absolute_score(data_gts, gen_result): 
-    # 注意：删除了 greedy_res 参数
+
     batch_size = len(data_gts)
     gen_result_size = gen_result.shape[0]
-    seq_per_img = gen_result_size // batch_size # 这就是你的 train_sample_n
+    seq_per_img = gen_result_size // batch_size 
 
     res = OrderedDict()
     gen_result_np = gen_result.data.cpu().numpy()
@@ -87,13 +87,13 @@ def get_absolute_score(data_gts, gen_result):
     for i in range(batch_size):
         gts[i] = [array_to_str(data_gts_np[i])]
     
-    # 关键修改：gts_ 只需要对应 gen_result_size 个样本
+
     res_final = {i: res[i] for i in range(gen_result_size)}
     gts_final = {i: gts[i // seq_per_img] for i in range(gen_result_size)}
 
-    # 计算各项指标原始分
+
     _, bleu_scores = Bleu_scorer.compute_score(gts_final, res_final, verbose=0)
-    bleu_scores = np.array(bleu_scores[3]) # BLEU-4
+    bleu_scores = np.array(bleu_scores[3]) 
     
     _, meteor_scores = Meteor_scorer.compute_score(gts_final, res_final)
     meteor_scores = np.array(meteor_scores)
@@ -101,9 +101,9 @@ def get_absolute_score(data_gts, gen_result):
     _, rouge_scores = Rouge_scorer.compute_score(gts_final, res_final)
     rouge_scores = np.array(rouge_scores)
 
-    # 这里的权重保持和你之前一致 (5:1:5)
+
     scores = 5/11 * bleu_scores + 1/11 * meteor_scores + 5/11 * rouge_scores
     
-    # --- 核心改动：不再减去 baseline 分数 ---
-    # 直接返回每个样本的绝对得分，形状为 [B * train_sample_n]
+
+
     return scores
