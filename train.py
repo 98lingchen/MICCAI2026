@@ -136,7 +136,7 @@ def main():
     args = parse_args()
     logger = setup_logging(args)
 
-    logger.info(">>> [Step 1/7] Initializing distributed environment...")
+
     init_distributed(args)
     device = torch.device("cuda", args.local_rank) if torch.cuda.is_available() else torch.device("cpu")
 
@@ -149,23 +149,23 @@ def main():
     torch.backends.cudnn.benchmark = True
 
 
-    logger.info(">>> [Step 2/7] Loading Tokenizer...")
+
     tokenizer = Tokenizer(args)
 
 
-    logger.info(">>> [Step 3/7] Loading DataLoaders (this may take a while)...")
+
     train_loader = R2DataLoader(args, tokenizer, split='train', shuffle=True)
     val_loader   = R2DataLoader(args, tokenizer, split='val', shuffle=False)
     test_loader  = R2DataLoader(args, tokenizer, split='test', shuffle=False)
     if args.distributed: dist.barrier()
 
 
-    logger.info(">>> [Step 4/7] Building R2GenModel...")
+
     model = R2GenModel(args, tokenizer).to(device)
 
 
     if args.distributed:
-        logger.info(">>> [Step 5/7] Wrapping model with DDP...")
+
         model = DDP(model, 
                     device_ids=[args.local_rank], 
                     output_device=args.local_rank,
@@ -173,7 +173,7 @@ def main():
         dist.barrier()
 
 
-    logger.info(">>> [Step 6/7] Building optimizers and criteria...")
+
     criterion = RewardCriterion()
     metrics = compute_scores
 
@@ -183,13 +183,12 @@ def main():
         ve_optimizer, ed_optimizer = build_plateau_optimizer(args, model)
 
 
-    logger.info(">>> [Step 7/7] Instantiating Trainer...")
 
     trainer = Trainer(model.module if hasattr(model, 'module') else model, 
                     criterion, metrics, ve_optimizer, ed_optimizer, args,
                     train_loader, val_loader, test_loader)
 
-    logger.info(">>> All systems go! Starting training loop...")
+
     trainer.train()
 
     if args.distributed:
