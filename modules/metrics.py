@@ -2,7 +2,7 @@ from pycocoevalcap.bleu.bleu import Bleu
 from pycocoevalcap.meteor import Meteor
 from pycocoevalcap.rouge import Rouge
 from f1chexbert import F1CheXbert
-# f1chexbert = F1CheXbert()
+
 
 
 def compute_scores(gts, res, use_clinical=False):
@@ -22,8 +22,7 @@ def compute_scores(gts, res, use_clinical=False):
     ]
     eval_res = {}
     f1chexbert = F1CheXbert()
-    # accuracy, accuracy_not_averaged, class_report, class_report_5 = f1chexbert(hyps=gts, refs=res)
-    # Compute score for each metric
+
     for scorer, method in scorers:
         try:
             score, scores = scorer.compute_score(gts, res, verbose=0)
@@ -61,11 +60,3 @@ def compute_scores(gts, res, use_clinical=False):
 
     return eval_res
 
-# gts_txt = [v[0] for v in gts.values()]
-# res_txt = [v[0] for v in res.values()]
-
-# acc, acc_not_avg, _, _ = f1chexbert(
-#     hyps=res_txt,
-#     refs=gts_txt
-# )
-# eval_res["CLINICAL_ACC"] = acc
