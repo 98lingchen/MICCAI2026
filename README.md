@@ -14,7 +14,7 @@ f1chexbert
 
 ## Datasets
 
-For MIMIC-CXR, you can download the dataset from [here]([https://physionet.org/content/mimic-cxr/](https://physionet.org/content/mimic-cxr-jpg/2.0.0/]) and then put the files in `data/mimic_cxr`.
+For MIMIC-CXR, you can download the dataset from [here](https://physionet.org/content/mimic-cxr-jpg/2.0.0/) and then put the files in `data/mimic_cxr`.
 
 ### Train
 
