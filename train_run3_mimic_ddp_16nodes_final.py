@@ -97,7 +97,6 @@ def parse_args():
     parser.add_argument('--step_size', type=int, default=1)
     parser.add_argument('--gamma', type=float, default=0.8)
     parser.add_argument('--resume', type=str, default='/fs/ess/PAS3128/lingchen/data/MIMIC-CXR-JPG/mimic-cxr-jpg-2.0.0.physionet.org/model_mimic_cxr.pth')
-    # parser.add_argument('--resume', type=str, default='/fs/ess/PAS3128/lingchen/code/LHR_RFL/LHR-RFL-main2/results_MIMIC16nodes_group_nocondition/MIMIC-CXR/checkpoint_epoch_15.pth')
     parser.add_argument('--seed', type=int, default=np.random.randint(10000))
 
     # Self-Critical
