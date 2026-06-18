@@ -26,7 +26,8 @@ Run `bash run_train.sh` to train a model on the MIMIC-CXR data.
 
 Run `bash run_test.sh` to test a model on the MIMIC-CXR data.
 
-## Pretrained Model The pretrained model and related files can be downloaded from [[Google Drive]](https://drive.google.com/drive/folders/1vqyvFI3SB4hDb--3-PMI_hV2g75NdNz2?usp=sharing). Please place the downloaded files in the corresponding checkpoint directory before testing.
+## Pretrained Model The pretrained model and related files can be downloaded from [[Google Drive]](https://drive.google.com/drive/folders/1vqyvFI3SB4hDb--3-PMI_hV2g75NdNz2?usp=sharing).
+Please place the downloaded files in the corresponding checkpoint directory before testing.
 
 
 
